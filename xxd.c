@@ -54,6 +54,19 @@
  * make money and share with me,
  * lose money and don't ask me.
  */
+
+/*
+ * Modifications made by Galen Cochrane (github.com/a-day-old-bagel)
+ *
+ * 08.04.17 Added CMake build system files and a header.
+ *          Made xxd buildable as a static lib in addition to an executable.
+ *          Deduced that xxd is actually licensed under
+ *          X11-MIT or GPL-2.0 (at the user's choice).
+ *          This deduction is due to the correspondence found here:
+ *          https://lists.debian.org/debian-legal/2015/01/msg00037.html
+ *          which I have recorded in the file "DeducedLicense.html"
+ */
+
 #include <stdio.h>
 #include <fcntl.h>
 #ifdef __TSC__
@@ -392,7 +405,9 @@ static unsigned char etoa64[] =
 };
 
 int
-main(argc, argv)
+xxd(in, out, argc, argv)
+FILE *in;
+FILE *out;
 int argc;
 char *argv[];
 {
@@ -548,7 +563,7 @@ char *argv[];
     exit_with_usage(pname);
 
   if (argc == 1 || (argv[1][0] == '-' && !argv[1][1]))
-    BIN_ASSIGN(fp = stdin, !revert);
+    BIN_ASSIGN(fp = in, !revert);
   else
     {
       if ((fp = fopen(argv[1], BIN_READ(!revert))) == NULL)
@@ -560,7 +575,7 @@ char *argv[];
     }
 
   if (argc < 3 || (argv[2][0] == '-' && !argv[2][1]))
-    BIN_ASSIGN(fpo = stdout, revert);
+    BIN_ASSIGN(fpo = out, revert);
   else
     {
       int fd;
@@ -613,7 +628,7 @@ char *argv[];
 
   if (hextype == HEX_CINCLUDE)
     {
-      if (fp != stdin)
+      if (fp != in)
 	{
 	  fprintf(fpo, "unsigned char %s", isdigit(argv[1][0]) ? "__" : "");
 	  for (e = 0; (c = argv[1][e]) != 0; e++)
@@ -630,9 +645,9 @@ char *argv[];
 	}
 
       if (p)
-        fputs("\n};\n"+3*(fp == stdin), fpo);
+        fputs("\n};\n"+3*(fp == in), fpo);
 
-      if (fp != stdin)
+      if (fp != in)
 	{
 	  fprintf(fpo, "unsigned int %s", isdigit(argv[1][0]) ? "__" : "");
 	  for (e = 0; (c = argv[1][e]) != 0; e++)
