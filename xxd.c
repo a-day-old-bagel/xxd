@@ -65,7 +65,10 @@
  *          This deduction is due to the correspondence found here:
  *          https://lists.debian.org/debian-legal/2015/01/msg00037.html
  *          which I have recorded in the file "DeducedLicense.html"
+ * 11.11.18 Suppressed warnings with the -Wstring-plus-int clang flag
  */
+
+#pragma clang diagnostic ignored "-Wstring-plus-int"
 
 #include <stdio.h>
 #include <fcntl.h>
@@ -529,7 +532,7 @@ char *argv[];
       argv++;				/* advance to next argument */
       argc--;
     }
-  
+
   if (!cols)
     switch (hextype)
       {
@@ -539,7 +542,7 @@ char *argv[];
       case HEX_NORMAL:
       default:			cols = 16; break;
       }
-  
+
   if (octspergrp < 0)
     switch (hextype)
       {
@@ -708,7 +711,7 @@ char *argv[];
 	  for (i = 7; i >= 0; i--)
 	    l[++c] = (e & (1 << i)) ? '1' : '0';
 	}
-      if (ebcdic) 
+      if (ebcdic)
         e = (e < 64) ? '.' : etoa64[e-64];
       l[11 + (grplen * cols - 1)/octspergrp + p] = (e > 31 && e < 127) ? e : '.';
       if (e)
